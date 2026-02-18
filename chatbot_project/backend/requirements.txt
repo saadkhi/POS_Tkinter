@@ -1,9 +1,0 @@
-Django>=4.2
-djangorestframework
-djangorestframework-simplejwt
-sentence-transformers
-faiss-cpu                     # or faiss-gpu
-celery[redis]
-redis
-python-dotenv
-groq
