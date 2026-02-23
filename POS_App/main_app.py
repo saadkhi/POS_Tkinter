@@ -4,6 +4,7 @@ from tkinter import messagebox
 import sqlite3
 import hashlib
 import threading
+import customtkinter as ctk
 
 from pos_page import POSFrame
 from table_viewer_page import TableViewerFrame
@@ -54,22 +55,27 @@ def init_db():
     conn.close()
 
 # -------------------- MAIN APP --------------------
-class POSApp(tk.Tk):
+# -------------------- MAIN APP --------------------
+class POSApp(ctk.CTk):
     def __init__(self, username):
         super().__init__()
         self.title(f"POS System - Logged in as {username}")
-        self.geometry("1200x700")
+        self.geometry("1300x800")
+        
+        ctk.set_appearance_mode("dark")
+        ctk.set_default_color_theme("blue")
 
         # Navbar
-        nav_frame = tk.Frame(self, bg="#333")
-        nav_frame.pack(fill="x")
-        tk.Button(nav_frame, text="POS Sale", fg="white", bg="#333", command=self.show_pos).pack(side="left", padx=5, pady=5)
-        tk.Button(nav_frame, text="Table Viewer", fg="white", bg="#333", command=self.show_table).pack(side="left", padx=5, pady=5)
-        tk.Button(nav_frame, text="Sync Oracle", fg="white", bg="#333", command=lambda: threading.Thread(target=sync_all_tables).start()).pack(side="right", padx=5, pady=5)
+        nav_frame = ctk.CTkFrame(self, height=50, corner_radius=0)
+        nav_frame.pack(fill="x", side="top")
+        
+        ctk.CTkButton(nav_frame, text="POS Sale", command=self.show_pos, width=100).pack(side="left", padx=10, pady=5)
+        ctk.CTkButton(nav_frame, text="Table Viewer", command=self.show_table, width=100).pack(side="left", padx=10, pady=5)
+        ctk.CTkButton(nav_frame, text="Sync Oracle", command=lambda: threading.Thread(target=sync_all_tables).start(), width=100, fg_color="green", hover_color="darkgreen").pack(side="right", padx=10, pady=5)
 
         # Container for frames
-        self.container = tk.Frame(self)
-        self.container.pack(fill="both", expand=True)
+        self.container = ctk.CTkFrame(self)
+        self.container.pack(fill="both", expand=True, padx=20, pady=20)
 
         # Frames
         self.pos_frame = POSFrame(self.container)
@@ -87,18 +93,28 @@ class POSApp(tk.Tk):
         self.table_frame.pack(fill="both", expand=True)
 
 # -------------------- LOGIN --------------------
-class LoginApp(tk.Tk):
+# -------------------- LOGIN --------------------
+class LoginApp(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("POS Login")
-        self.geometry("400x250")
-        tk.Label(self, text="Username").pack(pady=10)
-        self.username_entry = tk.Entry(self)
-        self.username_entry.pack(pady=5)
-        tk.Label(self, text="Password").pack(pady=10)
-        self.password_entry = tk.Entry(self, show="*")
-        self.password_entry.pack(pady=5)
-        tk.Button(self, text="Login", command=self.login).pack(pady=20)
+        self.geometry("400x350")
+        
+        ctk.set_appearance_mode("dark")
+        ctk.set_default_color_theme("blue")
+
+        self.main_frame = ctk.CTkFrame(self)
+        self.main_frame.pack(expand=True, fill="both", padx=20, pady=20)
+
+        ctk.CTkLabel(self.main_frame, text="POS SYSTEM LOGIN", font=("Arial Bold", 20)).pack(pady=20)
+        
+        self.username_entry = ctk.CTkEntry(self.main_frame, placeholder_text="Username", width=250)
+        self.username_entry.pack(pady=10)
+        
+        self.password_entry = ctk.CTkEntry(self.main_frame, placeholder_text="Password", show="*", width=250)
+        self.password_entry.pack(pady=10)
+        
+        ctk.CTkButton(self.main_frame, text="Login", command=self.login, width=250).pack(pady=30)
 
     def login(self):
         username = self.username_entry.get()

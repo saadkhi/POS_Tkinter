@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+import customtkinter as ctk
 from datetime import datetime
 import threading
 import oracledb
@@ -61,49 +62,49 @@ def get_articles_list(sale_return='N', loc_id=None):
         return []
 
 # -------------------- POS FRAME --------------------
-class POSFrame(tk.Frame):
+class POSFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
         self.sale_items = []
 
         # Sale Info Frame
-        frame1 = tk.Frame(self)
+        frame1 = ctk.CTkFrame(self)
         frame1.pack(fill="x", padx=10, pady=10)
-        tk.Label(frame1, text="Salem Emply Id").grid(row=0, column=0)
-        self.emp_entry = ttk.Combobox(frame1, values=EMPLOYEE_LIST, state="readonly")
-        self.emp_entry.grid(row=0, column=1)
+        ctk.CTkLabel(frame1, text="Salem Emply Id").grid(row=0, column=0, padx=5, pady=5)
+        self.emp_entry = ctk.CTkComboBox(frame1, values=EMPLOYEE_LIST, width=200)
+        self.emp_entry.grid(row=0, column=1, padx=5, pady=5)
         self.emp_entry.set(EMPLOYEE_LIST[0])
 
-        tk.Label(frame1, text="Salem Trans#").grid(row=0, column=2)
-        self.trans_entry = tk.Entry(frame1)
-        self.trans_entry.grid(row=0, column=3)
+        ctk.CTkLabel(frame1, text="Salem Trans#").grid(row=0, column=2, padx=5, pady=5)
+        self.trans_entry = ctk.CTkEntry(frame1)
+        self.trans_entry.grid(row=0, column=3, padx=5, pady=5)
 
-        tk.Label(frame1, text="Contact #").grid(row=1, column=0)
-        self.contact_entry = tk.Entry(frame1)
-        self.contact_entry.grid(row=1, column=1)
+        ctk.CTkLabel(frame1, text="Contact #").grid(row=1, column=0, padx=5, pady=5)
+        self.contact_entry = ctk.CTkEntry(frame1)
+        self.contact_entry.grid(row=1, column=1, padx=5, pady=5)
 
-        tk.Label(frame1, text="Date").grid(row=1, column=2)
-        self.date_entry = tk.Entry(frame1)
+        ctk.CTkLabel(frame1, text="Date").grid(row=1, column=2, padx=5, pady=5)
+        self.date_entry = ctk.CTkEntry(frame1)
         self.date_entry.insert(0, datetime.now().strftime("%d-%b-%Y %H:%M:%S"))
-        self.date_entry.grid(row=1, column=3)
+        self.date_entry.grid(row=1, column=3, padx=5, pady=5)
 
         self.return_var = tk.IntVar()
-        tk.Checkbutton(frame1, text="Return Item", variable=self.return_var).grid(row=2, column=0, pady=5)
+        ctk.CTkCheckBox(frame1, text="Return Item", variable=self.return_var).grid(row=2, column=0, pady=5, padx=5)
 
         # Article Entry Frame
-        frame2 = tk.Frame(self)
+        frame2 = ctk.CTkFrame(self)
         frame2.pack(fill="x", padx=10, pady=10)
 
-        tk.Label(frame2, text="Bar Code").grid(row=0, column=0)
-        self.bar_entry = tk.Entry(frame2)
-        self.bar_entry.grid(row=0, column=1)
+        ctk.CTkLabel(frame2, text="Bar Code").grid(row=0, column=0, padx=5, pady=5)
+        self.bar_entry = ctk.CTkEntry(frame2, width=120)
+        self.bar_entry.grid(row=0, column=1, padx=5, pady=5)
 
-        tk.Label(frame2, text="Article Description").grid(row=0, column=2)
+        ctk.CTkLabel(frame2, text="Article Description").grid(row=0, column=2, padx=5, pady=5)
         # Fetch articles dynamically
         result = get_articles_list(sale_return='N', loc_id=None)
         article_values = [r[0] for r in result]
-        self.article_entry = ttk.Combobox(frame2, values=article_values, width=50)
-        self.article_entry.grid(row=0, column=3)
+        self.article_entry = ctk.CTkComboBox(frame2, values=article_values, width=300)
+        self.article_entry.grid(row=0, column=3, padx=5, pady=5)
         if article_values:
             self.article_entry.set(article_values[0])
 
@@ -125,14 +126,14 @@ class POSFrame(tk.Frame):
                 size = "Unknown"
             self.articles_data[display] = {"Color": color, "Size": size, "Retail": 10000, "Atlcs_id": atlcs_id}
 
-        tk.Label(frame2, text="Qty").grid(row=0, column=4)
-        self.qty_entry = tk.Entry(frame2)
-        self.qty_entry.grid(row=0, column=5)
+        ctk.CTkLabel(frame2, text="Qty").grid(row=0, column=4, padx=5, pady=5)
+        self.qty_entry = ctk.CTkEntry(frame2, width=60)
+        self.qty_entry.grid(row=0, column=5, padx=5, pady=5)
 
-        tk.Button(frame2, text="Add Item", command=self.add_item).grid(row=0, column=6, padx=5)
+        ctk.CTkButton(frame2, text="Add Item", command=self.add_item).grid(row=0, column=6, padx=10, pady=5)
 
         # Items Table Frame
-        frame3 = tk.Frame(self)
+        frame3 = ctk.CTkFrame(self)
         frame3.pack(fill="both", expand=True, padx=10, pady=10)
         columns = ["Article Name", "Color Desc", "Size", "Retail Rate", "Quantity",
                    "Final Price", "Salem Emply Id", "Sale Discount"]
@@ -146,27 +147,27 @@ class POSFrame(tk.Frame):
         self.tree.configure(yscrollcommand=scrollbar.set)
 
         # Totals Frame
-        frame4 = tk.Frame(self)
+        frame4 = ctk.CTkFrame(self)
         frame4.pack(fill="x", padx=10, pady=10)
-        tk.Label(frame4, text="Pay Mode").grid(row=0, column=0)
-        self.pay_entry = tk.Entry(frame4)
-        self.pay_entry.grid(row=0, column=1)
+        ctk.CTkLabel(frame4, text="Pay Mode").grid(row=0, column=0, padx=5, pady=2)
+        self.pay_entry = ctk.CTkEntry(frame4)
+        self.pay_entry.grid(row=0, column=1, padx=5, pady=2)
 
-        tk.Label(frame4, text="Total Qty").grid(row=1, column=0)
-        self.total_qty_entry = tk.Entry(frame4)
-        self.total_qty_entry.grid(row=1, column=1)
+        ctk.CTkLabel(frame4, text="Total Qty").grid(row=1, column=0, padx=5, pady=2)
+        self.total_qty_entry = ctk.CTkEntry(frame4)
+        self.total_qty_entry.grid(row=1, column=1, padx=5, pady=2)
 
-        tk.Label(frame4, text="Original Price").grid(row=2, column=0)
-        self.orig_price_entry = tk.Entry(frame4)
-        self.orig_price_entry.grid(row=2, column=1)
+        ctk.CTkLabel(frame4, text="Original Price").grid(row=2, column=0, padx=5, pady=2)
+        self.orig_price_entry = ctk.CTkEntry(frame4)
+        self.orig_price_entry.grid(row=2, column=1, padx=5, pady=2)
 
-        tk.Label(frame4, text="Total Discount").grid(row=3, column=0)
-        self.discount_entry = tk.Entry(frame4)
-        self.discount_entry.grid(row=3, column=1)
+        ctk.CTkLabel(frame4, text="Total Discount").grid(row=3, column=0, padx=5, pady=2)
+        self.discount_entry = ctk.CTkEntry(frame4)
+        self.discount_entry.grid(row=3, column=1, padx=5, pady=2)
 
-        tk.Label(frame4, text="Net Sale").grid(row=4, column=0)
-        self.net_sale_entry = tk.Entry(frame4)
-        self.net_sale_entry.grid(row=4, column=1)
+        ctk.CTkLabel(frame4, text="Net Sale").grid(row=4, column=0, padx=5, pady=2)
+        self.net_sale_entry = ctk.CTkEntry(frame4)
+        self.net_sale_entry.grid(row=4, column=1, padx=5, pady=2)
 
     def add_item(self):
         article = self.article_entry.get()

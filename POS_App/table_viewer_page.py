@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+import customtkinter as ctk
 import sqlite3
 import pandas as pd
 
@@ -17,25 +18,25 @@ TABLES = [
 
 LOCAL_DB = "local_pos.db"
 
-class TableViewerFrame(tk.Frame):
+class TableViewerFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
-        self.selected_table = tk.StringVar(value=TABLES[0])
+        self.selected_table = ctk.StringVar(value=TABLES[0])
         self.columns_list = []
 
         # Table Dropdown
-        dropdown = ttk.Combobox(self, values=TABLES, textvariable=self.selected_table, state="readonly")
-        dropdown.pack(pady=10)
-        dropdown.bind("<<ComboboxSelected>>", lambda e: self.load_columns())
+        dropdown = ctk.CTkComboBox(self, values=TABLES, variable=self.selected_table, command=lambda e: self.load_columns())
+        dropdown.pack(pady=20)
 
-        # Columns Listbox
-        self.listbox_frame = tk.Frame(self)
-        self.listbox_frame.pack(pady=5, fill="x")
-        self.listbox = tk.Listbox(self.listbox_frame, selectmode="multiple", height=5)
-        self.listbox.pack(fill="x")
+        # Columns Listbox (Keeping standard Listbox for now but in ctk frame)
+        self.listbox_frame = ctk.CTkFrame(self)
+        self.listbox_frame.pack(pady=5, fill="x", padx=10)
+        ctk.CTkLabel(self.listbox_frame, text="Select Columns:").pack(pady=5)
+        self.listbox = tk.Listbox(self.listbox_frame, selectmode="multiple", height=5, bg="#2b2b2b", fg="white", borderwidth=0, highlightthickness=0)
+        self.listbox.pack(fill="x", padx=10, pady=5)
 
         # Treeview
-        self.tree_frame = tk.Frame(self)
+        self.tree_frame = ctk.CTkFrame(self)
         self.tree_frame.pack(fill="both", expand=True, padx=10, pady=10)
         self.tree = ttk.Treeview(self.tree_frame)
         self.tree.pack(fill="both", expand=True, side="left")
@@ -43,7 +44,7 @@ class TableViewerFrame(tk.Frame):
         scrollbar.pack(side="right", fill="y")
         self.tree.configure(yscrollcommand=scrollbar.set)
 
-        tk.Button(self, text="Load Data", command=self.load_table).pack(pady=10)
+        ctk.CTkButton(self, text="Load Data", command=self.load_table).pack(pady=20)
 
         self.load_columns()
 
