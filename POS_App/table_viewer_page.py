@@ -73,7 +73,10 @@ class TableViewerFrame(tk.Frame):
 
         try:
             conn = sqlite3.connect(LOCAL_DB)
-            df = pd.read_sql_query(f'SELECT {",".join(selected_cols)} FROM "{self.selected_table.get()}" LIMIT 50', conn)
+            # Quote column names to handle special characters like #
+            quoted_cols = [f'"{col}"' for col in selected_cols]
+            query = f'SELECT {",".join(quoted_cols)} FROM "{self.selected_table.get()}" LIMIT 50'
+            df = pd.read_sql_query(query, conn)
             conn.close()
         except Exception as e:
             messagebox.showerror("Error", str(e))

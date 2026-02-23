@@ -7,6 +7,7 @@ import threading
 
 from pos_page import POSFrame
 from table_viewer_page import TableViewerFrame
+from sync_service import sync_oracle_to_sqlite
 
 # -------------------- CONFIG --------------------
 LOCAL_DB = "local_pos.db"
@@ -16,8 +17,41 @@ def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 def sync_all_tables():
-    # Placeholder sync function
-    messagebox.showinfo("Info", "Sync called!")
+    # Call the synchronization service
+    success, message = sync_oracle_to_sqlite()
+    if success:
+        messagebox.showinfo("Success", message)
+    else:
+        messagebox.showerror("Error", message)
+
+def init_db():
+    conn = sqlite3.connect(LOCAL_DB)
+    cursor = conn.cursor()
+    # Create users table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    """)
+    # Insert default admin user if it doesn't exist
+    admin_user = "admin"
+    admin_pass = hash_password("admin")
+    cursor.execute("SELECT * FROM users WHERE username=?", (admin_user,))
+    if not cursor.fetchone():
+        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (admin_user, admin_pass))
+    
+    # Ensure other tables mentioned in TableViewerFrame exist to prevent crashes
+    tables = [
+        "STGS_ARTICLE_CSM", "STGS_ARTICLEM", "STGS_COLORM", 
+        "ARTICLE_SIZEM", "FACOA", "ARTICLE_SIZE_TYPE"
+    ]
+    for table in tables:
+        cursor.execute(f'CREATE TABLE IF NOT EXISTS "{table}" (id INTEGER PRIMARY KEY)')
+
+    conn.commit()
+    conn.close()
 
 # -------------------- MAIN APP --------------------
 class POSApp(tk.Tk):
@@ -84,5 +118,6 @@ class LoginApp(tk.Tk):
 
 # -------------------- RUN --------------------
 if __name__ == "__main__":
+    init_db()
     login_app = LoginApp()
     login_app.mainloop()
