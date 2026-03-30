@@ -1,10 +1,10 @@
 import oracledb
 
-DB_USER = "botiq"
-DB_PASS = "nasir786"
-DB_HOST = "79.143.179.51"
-DB_PORT = 1539
-DB_SERVICE = "oracle"
+DB_USER = "Gawk"
+DB_PASS = "Gawk"
+DB_HOST = "Gawk.Gawk.Gawk.Gawk"
+DB_PORT = Gawk
+DB_SERVICE = "Gawk"
 
 tables = [
     "FACOA",
